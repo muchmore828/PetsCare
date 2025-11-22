@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>簇咪手作｜寵物保養品體驗課</title>
+    <!-- 引入 LINE LIFF SDK -->
+    <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <!-- 引入 Google Fonts (使用比較圓潤的字體) -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&family=Zen+Maru+Gothic:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* 森系配色：療癒、天然 */
+            --primary-green: #5F8D4E;    /* 鼠尾草綠 */
+            --secondary-green: #A4BE7B;  /* 嫩芽綠 */
+            --bg-color: #Fdfcf5;         /* 米白/燕麥色 */
+            --card-bg: #FFFFFF;
+            --text-color: #4A4A4A;       /* 深灰，比純黑柔和 */
+            --accent-brown: #8D6E63;     /* 木質棕 */
+            --price-red: #D32F2F;        /* 價格強調色 */
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', 'Noto Sans TC', sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 0;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .header-banner {
+            background: linear-gradient(135deg, var(--primary-green), var(--secondary-green));
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
+            box-shadow: 0 4px 15px rgba(95, 141, 78, 0.2);
+        }
+
+        .header-banner h1 {
+            margin: 0;
+            font-size: 1.6rem;
+            letter-spacing: 1px;
+        }
+
+        .header-banner p {
+            margin: 10px 0 0;
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* 卡片式區塊設計 */
+        .card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            border: 1px solid #F0F0F0;
+        }
+
+        h2 {
+            color: var(--primary-green);
+            font-size: 1.3rem;
+            margin-top: 0;
+            margin-bottom: 15px;
+            border-left: 5px solid var(--secondary-green);
+            padding-left: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .highlight-box {
+            background-color: #F1F8E9;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+
+        ul.feature-list {
+            padding-left: 20px;
+            margin: 10px 0;
+        }
+        ul.feature-list li {
+            margin-bottom: 8px;
+        }
+
+        /* 產品清單 */
+        .product-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .product-item {
+            background: white;
+            border: 1px solid var(--secondary-green);
+            color: var(--primary-green);
+            padding: 8px 15px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            flex: 1 1 auto;
+            text-align: center;
+        }
+
+        /* 價格區塊 */
+        .price-tag {
+            text-align: center;
+            background: #FFF3E0;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 15px;
+        }
+        .original-price {
+            text-decoration: line-through;
+            color: #999;
+            font-size: 0.9rem;
+        }
+        .promo-price {
+            color: var(--price-red);
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+        .promo-note {
+            font-size: 0.85rem;
+            color: var(--accent-brown);
+            margin-top: 5px;
+        }
+
+        /* 圖片展示區 */
+        .image-gallery {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .image-gallery img {
+            width: 100%;
+            height: 200px; /* 固定高度讓排版整齊 */
+            object-fit: cover;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        /* 表單樣式 */
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: var(--text-color);
+        }
+        input[type="text"], 
+        input[type="tel"], 
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #eee;
+            border-radius: 10px;
+            font-size: 1rem;
+            box-sizing: border-box;
+            transition: all 0.3s;
+            background-color: #FAFAFA;
+        }
+        input:focus, select:focus {
+            border-color: var(--primary-green);
+            background-color: white;
+            outline: none;
+        }
+
+        /* 選項按鈕組 (Radio tiles) */
+        .radio-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .radio-label {
+            flex: 1;
+            cursor: pointer;
+        }
+        .radio-label input {
+            display: none;
+        }
+        .radio-tile {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 12px;
+            background: #FAFAFA;
+            border: 2px solid #eee;
+            border-radius: 10px;
+            font-weight: bold;
+            color: #999;
+            transition: all 0.2s;
+        }
+        .radio-label input:checked + .radio-tile {
+            background-color: var(--primary-green);
+            color: white;
+            border-color: var(--primary-green);
+            box-shadow: 0 4px 10px rgba(95, 141, 78, 0.3);
+        }
+
+        /* 注意事項文字 */
+        .notice-text {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        .notice-title {
+            font-weight: bold;
+            color: var(--accent-brown);
+            margin-top: 15px;
+            margin-bottom: 5px;
+        }
+
+        /* 送出按鈕 */
+        button.submit-btn {
+            width: 100%;
+            background: linear-gradient(to right, var(--primary-green), var(--secondary-green));
+            color: white;
+            padding: 16px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(95, 141, 78, 0.4);
+            transition: transform 0.2s;
+            margin-top: 10px;
+        }
+        button.submit-btn:active {
+            transform: scale(0.98);
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="header-banner">
+        <h1>簇咪手作 True Me</h1>
+        <p>貓貓狗狗的寵物保養品手作體驗課<br>🌿 天然養護 x 療癒時光 🌿</p>
+    </div>
+
+    <div class="container">
+        
+        <!-- 課程介紹卡片 -->
+        <div class="card">
+            <h2>🌟 課程介紹</h2>
+            <div class="highlight-box">
+                <p style="margin:0;">本課程由 <strong>咪咪老師</strong> 帶領，採一對一專屬教學，讓您用超值的價格，親手製作三款毛孩居家護理產品！</p>
+            </div>
+            <ul class="feature-list">
+                <li>✅ <strong>配方安心：</strong>採用 ICAD 國際香氛設計中心制訂配方。</li>
+                <li>✅ <strong>國際認證：</strong>獲得韓國 MFDS 食品醫藥安全署認可。</li>
+                <li>✅ <strong>課程內容：</strong>簡述人寵代謝差異、精油與純露的基本認識、DIY 實作。</li>
+            </ul>
+
+            <div style="margin-top: 20px;">
+                <h3 style="font-size:1.1rem; color:var(--accent-brown);">🎁 帶回總價值 NT$1200 成品：</h3>
+                <div class="product-list">
+                    <div class="product-item">🚿 250ml 溫和洗髮露</div>
+                    <div class="product-item">✨ 150ml 梳毛噴霧</div>
+                    <div class="product-item">🐾 15g 足底軟膏</div>
+                </div>
+            </div>
+
+            <div class="price-tag">
+                <div class="original-price">課程原價 NT$ 2,200</div>
+                <div class="promo-price">NT$ 1,800</div>
+                <div class="promo-note">包含材料費、茶點一份、場地清潔費</div>
+            </div>
+
+            <div class="highlight-box" style="background-color: #FFF8E1; border: 1px dashed #FFB74D; margin-top:15px;">
+                <strong style="color: #F57C00;">🎉 限時加碼 (至 12/31 止)</strong><br>
+                報名即贈：<br>
+                1. 天然除味噴霧隨身瓶 30ml (價值 $280)<br>
+                2. 人氣貓咪扭蛋乙顆 (價值 $100)
+            </div>
+
+            <p style="font-size: 0.9rem; text-align: center; color: #666; margin-top: 15px;">
+                📍 <strong>上課地點：多肉咖啡</strong><br>
+                (苗栗縣頭份市尚順路75-3號，尚順日本城內)<br>
+                <span style="font-size: 0.8rem;">*整座日本城都是停車場，消費恕無法折抵停車費</span>
+            </p>
+        </div>
+
+        <!-- 圖片區 (請記得替換您的圖片連結) -->
+        <div class="image-gallery">
+            <!-- 建議圖片尺寸：800x800 或 1:1 方形圖 -->
+            <!-- 請將下方的 src 換成您上傳到 GitHub 的圖片檔名 -->
+            <img src="ad_01.png" alt="課程實作圖1" style="object-fit: cover;">
+            <img src="ad_02.png" alt="成品展示圖2" style="object-fit: cover;">
+        </div>
+
+        <!-- 報名表單 -->
+        <div class="card">
+            <h2>📝 立即預約報名</h2>
+            <form id="bookingForm">
+                
+                <div class="form-group">
+                    <label for="name">1. 您的姓名</label>
+                    <input type="text" id="name" placeholder="請輸入姓名" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">2. 聯絡電話</label>
+                    <input type="tel" id="phone" placeholder="09xx-xxx-xxx" required>
+                </div>
+
+                <div class="form-group">
+                    <label>3. 您的主要寵物為？</label>
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="petType" value="貓" required>
+                            <span class="radio-tile">🐱 貓</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="petType" value="狗">
+                            <span class="radio-tile">🐶 狗</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="petType" value="貓狗皆有">
+                            <span class="radio-tile">🏠 皆有</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="source">4. 如何得知課程資訊？</label>
+                    <select id="source" required>
+                        <option value="" disabled selected>請選擇...</option>
+                        <option value="IG">Instagram (IG)</option>
+                        <option value="Line">Line 官方帳號</option>
+                        <option value="朋友推薦">朋友推薦</option>
+                        <option value="路過看到">路過看到</option>
+                        <option value="其他">其他</option>
+                    </select>
+                </div>
+
+                <!-- 規範區塊 (收合式設計，避免頁面過長) -->
+                <div style="background-color: #F5F5F5; padding: 15px; border-radius: 10px; margin-top: 20px;">
+                    <div class="notice-title">⚠️ 改期與退費規定</div>
+                    <div class="notice-text">
+                        • <strong>預約：</strong>匯款後保留報名日期。<br>
+                        • <strong>異動：</strong>需於5天前告知，限1次。<br>
+                        • <strong>退費：</strong>7天前申請退費，扣除材料及手續費後退還。7天內或當日缺席恕不退費。
+                    </div>
+
+                    <div class="notice-title">⚠️ 課堂規範</div>
+                    <div class="notice-text">
+                        • 配方不公開，嚴禁錄音錄影。<br>
+                        • 僅可拍攝自己的作品。<br>
+                        • 本課程無開立統一發票。<br>
+                        • 簇咪手作保有最終解釋權。
+                    </div>
+                    
+                    <label style="display:flex; align-items:center; margin-top:10px; font-size:0.9rem;">
+                        <input type="checkbox" required style="width:auto; margin-right:8px;">
+                        我已閱讀並同意上述規範
+                    </label>
+                </div>
+
+                <button type="submit" class="submit-btn">確認送出報名 ✨</button>
+            </form>
+        </div>
+
+    </div>
+
+    <script>
+        // ★★★ 請在此填入您的 LIFF ID ★★★
+        const YOUR_LIFF_ID = "2008538785-Q6v1a8jY"; 
+
+        // 初始化 LIFF
+        document.addEventListener('DOMContentLoaded', function() {
+            liff.init({ liffId: YOUR_LIFF_ID })
+                .then(() => {
+                    if (!liff.isLoggedIn()) {
+                        liff.login();
+                    }
+                })
+                .catch((err) => {
+                    console.error('LIFF Initialization failed', err);
+                    // alert('LIFF 初始化失敗：' + err.message); // 測試階段可開啟
+                });
+        });
+
+        // 表單送出處理
+        document.getElementById('bookingForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // 1. 獲取資料
+            const name = document.getElementById('name').value;
+            const phone = document.getElementById('phone').value;
+            const petType = document.querySelector('input[name="petType"]:checked').value;
+            const source = document.getElementById('source').value;
+
+            // 2. 組合訊息格式
+            // 使用 LINE 表情符號讓訊息更生動
+            const messageText = `【🌿 簇咪手作-保養品課程預約】\n\n` +
+                                `👤 姓名：${name}\n` +
+                                `📞 電話：${phone}\n` +
+                                `🐾 寵物：${petType}\n` +
+                                `📢 來源：${source}\n\n` +
+                                `------------------------------\n` +
+                                `✅ 已閱讀並同意退費及課堂規範\n` +
+                                `期待您的光臨！我們將盡快與您聯繫確認款項與日期。`;
+
+            // 3. 發送訊息
+            if (liff.isInClient()) {
+                liff.sendMessages([{
+                    type: 'text',
+                    text: messageText
+                }]).then(() => {
+                    liff.closeWindow();
+                }).catch((err) => {
+                    window.alert('訊息發送失敗，請確認您已授權權限。\n錯誤：' + err);
+                });
+            } else {
+                // 電腦版測試
+                window.alert('✅ 預覽訊息內容：\n\n' + messageText);
+            }
+        });
+    </script>
+</body>
+</html>
